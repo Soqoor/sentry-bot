@@ -1,0 +1,10 @@
+# IDE
+.idea/
+__pycache__/
+
+# Environments
+.env
+venv/
+
+# SQLite
+db.sqlite3
