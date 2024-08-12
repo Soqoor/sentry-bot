@@ -7,4 +7,4 @@ __pycache__/
 venv/
 
 # SQLite
-db.sqlite3
+database.db

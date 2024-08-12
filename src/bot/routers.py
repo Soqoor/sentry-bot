@@ -1,16 +1,21 @@
-from fastapi import APIRouter, BackgroundTasks, Depends
-from sqlalchemy.orm import Session
+from typing import cast
+
+from fastapi import APIRouter, BackgroundTasks, Depends, Request
+from telegram import Update
+from telegram.ext import Application
 
 from src.bot.auth import verify_secret_key
-from src.bot.services import BotService
-from src.database import get_db
 
 router = APIRouter()
 
 
 @router.post("/bot/", dependencies=[Depends(verify_secret_key)])
-def bot_webhook(
-    update_dict: dict, background_tasks: BackgroundTasks, db: Session = Depends(get_db)
+async def bot_webhook(
+    request: Request,
+    update_dict: dict,
+    background_tasks: BackgroundTasks,
 ):
-    background_tasks.add_task(BotService(db=db, update_dict=update_dict).handle_update)
+    bot_app = cast(Application, request.state.bot_app)
+    update = Update.de_json(data=update_dict, bot=bot_app.bot)
+    background_tasks.add_task(bot_app.process_update, update)
     return {}

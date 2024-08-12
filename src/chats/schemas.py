@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from src.users.models import ChatTypeEnum
+from src.chats.models import ChatTypeEnum
 
 
 class CreateOrUpdateChat(BaseModel):

@@ -1,0 +1,20 @@
+{
+  "elements": [
+    {
+      "type": "alert-rule-action",
+      "title": "Send telegram notification",
+      "settings": {
+        "type": "alert-rule-settings",
+        "uri": "/sentry/alert-rule",
+        "required_fields": [
+          {
+            "type": "text",
+            "label": "Chat UUID",
+            "name": "chat_uuid"
+          }
+        ],
+        "description": "You can get your chat uuid by starting a conversation with the @SentryUpdatesBot or by adding the bot to group chat."
+      }
+    }
+  ]
+}
