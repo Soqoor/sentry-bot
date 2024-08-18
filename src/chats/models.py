@@ -33,12 +33,10 @@ def chat_slug_generator(context):
 class Chat(Base):
     __tablename__ = "chats"
 
-    # pk and analytics
-    id: Mapped[int] = mapped_column(primary_key=True)
-    created: Mapped[DateTime] = mapped_column(DateTime, default=func.now(), nullable=False)
+    # analytics
     last_activity: Mapped[DateTime] = mapped_column(DateTime, default=func.now(), nullable=False)
-    user_activity_counter: Mapped[int] = mapped_column(Integer, default=0)
-    notify_activity_counter: Mapped[int] = mapped_column(Integer, default=0)
+    user_activity_counter: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    notify_activity_counter: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
     # telegram properties
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)

@@ -9,11 +9,11 @@
         "required_fields": [
           {
             "type": "text",
-            "label": "Chat UUID",
-            "name": "chat_uuid"
+            "label": "Chat Key",
+            "name": "chat_key"
           }
         ],
-        "description": "You can get your chat uuid by starting a conversation with the @SentryUpdatesBot or by adding the bot to group chat."
+        "description": "You can get your Chat Key by starting a conversation with the @SentryUpdatesBot or by adding the bot to group chat."
       }
     }
   ]

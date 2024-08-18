@@ -1,7 +1,8 @@
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import DateTime, func
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
-# Base class for models which contains necessary functionality to
-# interact with database using ORM.
 class Base(DeclarativeBase):
-    pass
+    id: Mapped[int] = mapped_column(primary_key=True)
+    created: Mapped[DateTime] = mapped_column(DateTime, default=func.now(), nullable=False)
+    modified: Mapped[DateTime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())

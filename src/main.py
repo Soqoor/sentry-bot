@@ -2,12 +2,11 @@ from contextlib import asynccontextmanager
 from typing import TypedDict
 
 import sentry_sdk
+from aiogram import Bot, Dispatcher
 from fastapi import FastAPI
-from telegram.ext import Application
 
-from src.bot.bot_application import get_bot_application
+from src.bot.bot_application import bot_app, bot_dp
 from src.bot.routers import router as bot_router
-from src.bot.services import setup_webhook
 from src.config import settings
 from src.sentry.routers import router as sentry_router
 
@@ -21,14 +20,21 @@ if settings.SENTRY_ENABLED:
 
 
 class State(TypedDict):
-    bot_app: Application
+    bot_app: Bot
+    bot_dp: Dispatcher
 
 
 @asynccontextmanager
 async def lifespan(*args, **kwargs):
-    await setup_webhook()
-    bot_app = await get_bot_application()
-    yield {"bot_app": bot_app}
+    r = await bot_app.set_webhook(
+        url=f"https://{settings.DOMAIN}/telegram/",
+        secret_token=settings.TG_SECRET_TOKEN,
+    )
+    print(f"{r=}")
+    yield {
+        "bot_app": bot_app,
+        "bot_dp": bot_dp,
+    }
 
 
 app = FastAPI(lifespan=lifespan)

@@ -14,7 +14,6 @@ def uuid_generator():
 class Installation(Base):
     __tablename__ = "installations"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
     installation_id: Mapped[str] = mapped_column(String)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     org_slug: Mapped[str] = mapped_column(String)

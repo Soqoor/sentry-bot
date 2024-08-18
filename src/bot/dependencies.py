@@ -1,25 +1,19 @@
-from functools import wraps
+from typing import Optional
 
-from src.chats import schemas
-from src.chats.services import ChatService
-from src.database import get_db
+from fastapi import Depends, HTTPException, status
+from fastapi.security import APIKeyHeader
+
+from src.config import settings
+
+api_key_header = APIKeyHeader(
+    name="X-Telegram-Bot-Api-Secret-Token",
+    auto_error=False,
+)
 
 
-def with_db_session(handler):
-    @wraps(handler)
-    async def wrapper(update, context, *args, **kwargs):
-        db = await get_db().__anext__()
-        chat = schemas.CreateOrUpdateChat(
-            chat_id=update.effective_chat.id,
-            chat_type=update.effective_chat.type,
-            username=update.effective_user.username or "",
-            first_name=update.effective_user.first_name or "",
-            last_name=update.effective_user.last_name or "",
-            chat_title=update.effective_chat.title or "",
-            chat_inviter=update.effective_user.id,
+def verify_secret_key(api_key: Optional[str] = Depends(api_key_header)):
+    if api_key is None or api_key != settings.TG_SECRET_TOKEN:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or missing API key",
         )
-        await ChatService(db).create_or_update(chat)
-        result = await handler(update, context, db, *args, **kwargs)
-        return result
-
-    return wrapper
