@@ -1,4 +1,3 @@
-import json
 from abc import ABC, abstractmethod
 
 from aiogram import Bot
@@ -10,9 +9,10 @@ from src.sentry.services import SentryService
 
 class BaseSentryHandler(ABC):
 
-    def __init__(self, db: AsyncSession, bot: Bot, update: dict):
+    def __init__(self, db: AsyncSession, bot: Bot, sentry_hook_resource: str, update: dict):
         self.db = db
         self.bot = bot
+        self.sentry_hook_resource = sentry_hook_resource
         self.update = update
 
     @abstractmethod
@@ -36,24 +36,21 @@ class SetupSentryHandler(BaseSentryHandler):
 
 class SentryHandlerFactory(BaseSentryHandler):
 
-    async def get_handler(self) -> BaseSentryHandler:
-        from src.sentry.handlers.alert import AlertSentryHandler
-        from src.sentry.handlers.metric import MetricSentryHandler
+    async def get_handler(self) -> BaseSentryHandler | None:
+        from src.sentry.handlers.alert import EventAlertSentryHandler
+        from src.sentry.handlers.metric import MetricAlertSentryHandler
 
-        action = self.update.get("action")
+        action = self.sentry_hook_resource
         match action:
-            case "created" | "deleted":
+            case "installation":
                 handler = SetupSentryHandler
-            case "triggered":
-                handler = AlertSentryHandler
-            case "critical" | "warning" | "resolved":
-                handler = MetricSentryHandler
+            case "event_alert":
+                handler = EventAlertSentryHandler
+            case "metric_alert":
+                handler = MetricAlertSentryHandler
             case _:
-                raise NotImplementedError(
-                    f"Sentry handler factory is not implemented for {action} action.",
-                    json.dumps(self.update, indent=4),
-                )
-        return handler(db=self.db, bot=self.bot, update=self.update)
+                return None
+        return handler(db=self.db, bot=self.bot, sentry_hook_resource=self.sentry_hook_resource, update=self.update)
 
     async def handle(self):
         pass

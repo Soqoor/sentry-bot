@@ -1,3 +1,5 @@
+import datetime
+
 import httpx
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -53,3 +55,11 @@ class SentryService:
         auth_token = data["token"]
         refresh_token = data["refreshToken"]
         return auth_token, refresh_token
+
+    async def log_sentry_activity(self, installation_id: str):
+        db_installation = await self.get_by_installation_id(installation_id)
+        if db_installation:
+            db_installation.last_activity = datetime.datetime.now()
+            db_installation.activity_counter = models.Installation.activity_counter + 1
+            db_installation.is_active = True
+            await self.db.commit()

@@ -42,7 +42,14 @@ async def sentry_webhook(
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
 ):
+    sentry_hook_resource = request.headers.get("Sentry-Hook-Resource")
     bot_app = cast(Bot, request.state.bot_app)
-    handler = await SentryHandlerFactory(db=db, bot=bot_app, update=sentry_update).get_handler()
-    background_tasks.add_task(handler.handle)
+    handler = await SentryHandlerFactory(
+        db=db,
+        bot=bot_app,
+        sentry_hook_resource=sentry_hook_resource,
+        update=sentry_update,
+    ).get_handler()
+    if handler:
+        background_tasks.add_task(handler.handle)
     return {}

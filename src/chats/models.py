@@ -50,3 +50,13 @@ class Chat(Base):
 
     # sentry properties
     chat_slug: Mapped[str] = mapped_column(String, default=chat_slug_generator)
+
+    @property
+    def name_display(self) -> str:
+        match self.chat_type:
+            case ChatTypeEnum.PRIVATE:
+                return self.username or self.first_name + self.last_name
+            case ChatTypeEnum.GROUP | ChatTypeEnum.SUPERGROUP:
+                return self.chat_title
+            case _:
+                raise NotImplementedError(f"Display name for {self.chat_type}")

@@ -1,10 +1,12 @@
 from src.chats.services import ChatService
 from src.sentry.handlers.base import BaseSentryHandler
+from src.sentry.services import SentryService
 
 
-class AlertSentryHandler(BaseSentryHandler):
+class EventAlertSentryHandler(BaseSentryHandler):
 
     async def handle(self):
+        await SentryService(db=self.db).log_sentry_activity(installation_id=self.update["installation"]["uuid"])
 
         title = (
             self.update["data"]["event"].get("metadata", {}).get("type")
@@ -25,3 +27,5 @@ class AlertSentryHandler(BaseSentryHandler):
         text = "".join(message_parts)
         chat = await ChatService(db=self.db).get_by_chat_slug(chat_slug=chat_slug)
         await self.bot.send_message(chat_id=chat.chat_id, text=text)
+
+        await ChatService(db=self.db).log_sentry_activity(chat_slug=chat_slug)

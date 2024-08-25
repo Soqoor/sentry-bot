@@ -1,7 +1,7 @@
 import uuid
 from typing import Optional
 
-from sqlalchemy import Boolean, ForeignKey, String
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.models import Base
@@ -13,6 +13,10 @@ def uuid_generator():
 
 class Installation(Base):
     __tablename__ = "installations"
+
+    # analytics
+    last_activity: Mapped[DateTime] = mapped_column(DateTime, default=func.now(), nullable=False)
+    activity_counter: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
     installation_id: Mapped[str] = mapped_column(String)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)

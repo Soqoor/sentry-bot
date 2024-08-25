@@ -34,3 +34,11 @@ class ChatService:
         else:
             self.db.add(models.Chat(**chat.dict()))
         await self.db.commit()
+
+    async def log_sentry_activity(self, chat_slug: str):
+        db_chat = await self.get_by_chat_slug(chat_slug)
+        if db_chat:
+            db_chat.last_activity = datetime.datetime.now()
+            db_chat.notify_activity_counter = models.Chat.notify_activity_counter + 1
+            db_chat.is_active = True
+            await self.db.commit()
