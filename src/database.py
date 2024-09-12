@@ -4,7 +4,7 @@ from src.config import settings
 
 # For mysql: mysql://<username>:<password>@<host>:<port>/<db>
 
-engine = create_async_engine(settings.DATABASE_URL)
+engine = create_async_engine(settings.ASYNC_DATABASE_URL)
 
 LocalSession = async_sessionmaker(
     bind=engine,

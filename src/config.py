@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -7,7 +9,13 @@ class Settings(BaseSettings):
     # base
     LOCAL_DEVELOPMENT: bool = False
     DOMAIN: str
-    DATABASE_URL: str = "sqlite+aiosqlite:///database.db"
+
+    # postgres database
+    DB_NAME: Optional[str]
+    DB_HOST: Optional[str]
+    DB_PORT: Optional[int]
+    DB_USER: Optional[str]
+    DB_PASSWORD: Optional[str]
 
     # admin panel
     ADMIN_USERNAME: str
@@ -28,6 +36,14 @@ class Settings(BaseSettings):
     SENTRY_ENABLED: bool = False
     SENTRY_ENV: str = "Local"
     SENTRY_DNS: str = ""
+
+    @property
+    def ASYNC_DATABASE_URL(self) -> str:
+        if self.DB_NAME:
+            return (
+                f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+            )
+        return "sqlite+aiosqlite:///database.db"
 
 
 settings = Settings()

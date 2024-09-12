@@ -13,7 +13,7 @@
             "name": "telegram_bot_chat_key"
           }
         ],
-        "description": "You can get your Chat Key by starting a conversation with the @SentryUpdatesBot or by adding the bot to group chat."
+        "description": "You can get your Chat Key by starting a conversation with the @sentry_io_bot or by adding the bot to group chat."
       }
     }
   ]
