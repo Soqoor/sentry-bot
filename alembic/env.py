@@ -1,5 +1,4 @@
 import asyncio
-import importlib
 from logging.config import fileConfig
 
 from sqlalchemy import pool
@@ -7,8 +6,10 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
+from src.chats.models import Chat  # noqa: F401
 from src.config import settings
 from src.models import Base
+from src.sentry.models import Installation  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -24,15 +25,6 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-MODELS = (
-    "src.chats.models.Chat",
-    "src.sentry.models.Installation",
-)
-for model in MODELS:
-    try:
-        loaded_module = importlib.import_module(model)
-    except ModuleNotFoundError:
-        print(f"Could not import module {model}")
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
