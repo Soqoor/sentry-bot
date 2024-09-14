@@ -1,6 +1,7 @@
 from src.chats.services import ChatService
 from src.sentry.handlers.base import BaseSentryHandler
 from src.sentry.services import SentryService
+from src.sentry.utils import clean_output
 
 
 class AlertSentryHandler(BaseSentryHandler):
@@ -53,17 +54,20 @@ class EventAlertSentryHandler(AlertSentryHandler):
                 return setting["value"]
         raise Exception("No chat key found")
 
+    @clean_output
     def get_title(self):
         return (
             self.update["data"]["event"].get("metadata", {}).get("type")
             or self.update["data"]["event"]["title"].split(": ")[0]
         )
 
+    @clean_output
     def get_description(self):
         return self.update["data"]["event"].get("metadata", {}).get("value") or ": ".join(
             self.update["data"]["event"]["title"].split(": ")[1:]
         )
 
+    @clean_output
     def get_triggered_rule(self):
         return self.update["data"]["triggered_rule"]
 
@@ -81,13 +85,16 @@ class MetricAlertSentryHandler(AlertSentryHandler):
                         return setting["value"]
         raise Exception("No chat key found")
 
+    @clean_output
     def get_title(self):
         icon_mapping = {"critical": "🟥 ", "warning": "🟨 ", "resolved": "🟩 "}
         return icon_mapping.get(self.update["action"]) + self.update["data"]["description_title"]
 
+    @clean_output
     def get_description(self):
         return self.update["data"]["description_text"]
 
+    @clean_output
     def get_triggered_rule(self):
         return self.update["data"]["metric_alert"]["alert_rule"]["name"]
 
