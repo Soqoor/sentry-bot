@@ -4,6 +4,7 @@ from typing import TypedDict
 import sentry_sdk
 from aiogram import Bot, Dispatcher
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from sqladmin import Admin
 
 from src.admin import authentication_backend
@@ -44,7 +45,13 @@ async def lifespan(*args, **kwargs):
 
 app = FastAPI(lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
 
-admin = Admin(app=app, engine=engine, authentication_backend=authentication_backend, title="Sentry Bot", base_url="")
+
+@app.get("/")
+async def redirect_to_admin():
+    return RedirectResponse(url="/admin/")
+
+
+admin = Admin(app=app, engine=engine, authentication_backend=authentication_backend, title="Sentry Bot")
 admin.add_view(ChatAdmin)
 admin.add_view(InstallationAdmin)
 

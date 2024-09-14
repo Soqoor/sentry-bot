@@ -18,6 +18,8 @@ bot_dp = Dispatcher()
 
 bot_dp.message.middleware(LogUserActivityMiddleware())
 bot_dp.message.middleware(DBSessionMiddleware())
+bot_dp.my_chat_member.middleware(LogUserActivityMiddleware())
+bot_dp.my_chat_member.middleware(DBSessionMiddleware())
 
 bot_dp.include_routers(
     start_router,

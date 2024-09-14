@@ -11,14 +11,15 @@ active_tokens = {}
 
 class AdminAuth(AuthenticationBackend):
     async def login(self, request: Request) -> bool:
-        form = await request.form()
-        username, password = form["username"], form["password"]
-        if username == settings.ADMIN_USERNAME and password == settings.ADMIN_PASSWORD:
-            token = secrets.token_hex(32)
-            active_tokens[token] = datetime.datetime.now().timestamp()
-            request.session.update({"token": token})
-            await self.remove_old_tokens()
-            return True
+        if settings.ADMIN_USERNAME and settings.ADMIN_PASSWORD:
+            form = await request.form()
+            username, password = form["username"], form["password"]
+            if username == settings.ADMIN_USERNAME and password == settings.ADMIN_PASSWORD:
+                token = secrets.token_hex(32)
+                active_tokens[token] = datetime.datetime.now().timestamp()
+                request.session.update({"token": token})
+                await self.remove_old_tokens()
+                return True
         return False
 
     async def logout(self, request: Request) -> bool:

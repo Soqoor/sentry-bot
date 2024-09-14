@@ -11,10 +11,10 @@ class AlertSentryHandler(BaseSentryHandler):
 
         chat_slug = self.get_chat_slug()
         chat = await ChatService(db=self.db).get_by_chat_slug(chat_slug=chat_slug)
-        text = self.create_alert_message()
-        await self.bot.send_message(chat_id=chat.chat_id, text=text)
-
-        await ChatService(db=self.db).log_sentry_activity(chat_slug=chat_slug)
+        if chat and chat.is_active:
+            text = self.create_alert_message()
+            await self.bot.send_message(chat_id=chat.chat_id, text=text)
+            await ChatService(db=self.db).log_sentry_activity(chat_slug=chat_slug)
 
     def create_alert_message(self):
         title = self.get_title()

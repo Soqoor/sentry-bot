@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,16 +9,16 @@ class Settings(BaseSettings):
     DOMAIN: str
 
     # postgres database
-    DB_NAME: Optional[str]
-    DB_HOST: Optional[str]
-    DB_PORT: Optional[int]
-    DB_USER: Optional[str]
-    DB_PASSWORD: Optional[str]
+    DB_NAME: str = ""
+    DB_HOST: str = ""
+    DB_PORT: str = ""
+    DB_USER: str = ""
+    DB_PASSWORD: str = ""
 
     # admin panel
-    ADMIN_USERNAME: str
-    ADMIN_PASSWORD: str
-    ADMIN_SECRET: str
+    ADMIN_USERNAME: str = ""
+    ADMIN_PASSWORD: str = ""
+    ADMIN_SECRET: str = ""
     ADMIN_SESSION_DURATION: int = 1 * 24 * 60 * 60
 
     # telegram

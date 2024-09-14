@@ -1,7 +1,7 @@
 from typing import Any, Awaitable, Callable, Dict
 
 from aiogram import BaseMiddleware
-from aiogram.types import Message
+from aiogram.types import TelegramObject
 
 from src.chats import schemas
 from src.chats.services import ChatService
@@ -11,7 +11,10 @@ from src.database import LocalSession
 class DBSessionMiddleware(BaseMiddleware):
 
     async def __call__(
-        self, handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]], event: Message, data: Dict[str, Any]
+        self,
+        handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
+        event: TelegramObject,
+        data: Dict[str, Any],
     ) -> Any:
         async with LocalSession() as session:
             data["db"] = session
@@ -21,7 +24,10 @@ class DBSessionMiddleware(BaseMiddleware):
 class LogUserActivityMiddleware(BaseMiddleware):
 
     async def __call__(
-        self, handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]], event: Message, data: Dict[str, Any]
+        self,
+        handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
+        event: TelegramObject,
+        data: Dict[str, Any],
     ) -> Any:
         async with LocalSession() as session:
             chat = schemas.CreateOrUpdateChat(

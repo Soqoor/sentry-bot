@@ -3,7 +3,7 @@ import string
 from enum import Enum
 from typing import Optional
 
-from sqlalchemy import Boolean, DateTime
+from sqlalchemy import BigInteger, Boolean, DateTime
 from sqlalchemy import Enum as SQLA_Enum
 from sqlalchemy import Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column
@@ -41,7 +41,7 @@ class Chat(Base):
     # telegram properties
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     chat_type: Mapped[str] = mapped_column(SQLA_Enum(ChatTypeEnum))
-    chat_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    chat_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     username: Mapped[Optional[str]] = mapped_column(String)
     first_name: Mapped[Optional[str]] = mapped_column(String)
     last_name: Mapped[Optional[str]] = mapped_column(String)
