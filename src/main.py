@@ -42,9 +42,9 @@ async def lifespan(*args, **kwargs):
     }
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
 
-admin = Admin(app=app, engine=engine, authentication_backend=authentication_backend, title="Sentry Bot")
+admin = Admin(app=app, engine=engine, authentication_backend=authentication_backend, title="Sentry Bot", base_url="")
 admin.add_view(ChatAdmin)
 admin.add_view(InstallationAdmin)
 
