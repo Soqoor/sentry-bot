@@ -1,4 +1,5 @@
 import datetime
+import json
 
 import httpx
 from sqlalchemy import select
@@ -6,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import settings
 from src.sentry import models, schemas
+from src.sentry.handlers.base import SentryHandlerFactory
 
 
 class SentryService:
@@ -63,3 +65,30 @@ class SentryService:
             db_installation.activity_counter = models.Installation.activity_counter + 1
             db_installation.is_active = True
             await self.db.commit()
+
+
+class AlertService:
+
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
+    async def create_alert(self, obj_in: schemas.AlertCreate) -> None:
+        db_alert = models.Alert(**obj_in.dict())
+        self.db.add(db_alert)
+        await self.db.commit()
+
+    async def test_run(self, alert_ids_list: list) -> None:
+        from src.bot.bot_application import bot_app
+
+        # alert_ids_list = [int(i) for i in alert_ids_list]
+        stmt = select(models.Alert).where(models.Alert.id.in_(alert_ids_list))
+        result = await self.db.execute(stmt)
+        for alert in result.scalars():
+            handler = await SentryHandlerFactory(
+                db=self.db,
+                bot=bot_app,
+                sentry_hook_resource=alert.sentry_hook_resource,
+                update=json.loads(alert.update),
+            ).get_handler()
+            text = handler.create_alert_message()
+            await bot_app.send_message(chat_id=settings.ADMIN_CHAT_ID, text=text)

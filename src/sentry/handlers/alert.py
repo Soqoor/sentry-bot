@@ -1,6 +1,9 @@
+import json
+
 from src.chats.services import ChatService
 from src.sentry.handlers.base import BaseSentryHandler
-from src.sentry.services import SentryService
+from src.sentry.schemas import AlertCreate
+from src.sentry.services import AlertService, SentryService
 from src.sentry.utils import clean_output
 
 
@@ -8,6 +11,17 @@ class AlertSentryHandler(BaseSentryHandler):
     chat_slug_setting_name = "telegram_bot_chat_key"  # Same field name should be set up in action_schema
 
     async def handle(self):
+        alert = AlertCreate(update=json.dumps(self.update), sentry_hook_resource=self.sentry_hook_resource)
+        try:
+            alert.title = self.get_title()[:255]
+            alert.description = self.get_description()[:255]
+            await self._handle()
+        except Exception as e:
+            alert.error_message = str(e)[:255]
+        finally:
+            await AlertService(self.db).create_alert(alert)
+
+    async def _handle(self):
         await SentryService(db=self.db).log_sentry_activity(installation_id=self.update["installation"]["uuid"])
 
         chat_slug = self.get_chat_slug()
@@ -19,14 +33,14 @@ class AlertSentryHandler(BaseSentryHandler):
 
     def create_alert_message(self):
         title = self.get_title()
-        description = self.get_description()
+        description = self.get_description() or "No description"
         triggered_rule = self.get_triggered_rule()
         web_url = self.get_web_url()
 
         message_parts = [
             f'<b><a href="{web_url}">{title}</a></b>',
-            f"\n{description}" if description else "",
-            f"\n\n<i>{triggered_rule}</i>",
+            f"\n<blockquote>{description}</blockquote>",
+            f"\n<i>{triggered_rule}</i>",
         ]
         return "".join(message_parts)
 

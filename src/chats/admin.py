@@ -13,6 +13,7 @@ class ChatAdmin(ModelView, model=Chat):
         Chat.user_activity_counter,
         Chat.notify_activity_counter,
     )
+    column_default_sort = [(Chat.last_activity, True)]
     column_formatters = {Chat.last_activity: last_activity_format}
     column_searchable_list = (
         Chat.chat_id,

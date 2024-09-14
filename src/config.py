@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     # base
     LOCAL_DEVELOPMENT: bool = False
     DOMAIN: str
+    ADMIN_CHAT_ID: str
 
     # postgres database
     DB_NAME: str = ""

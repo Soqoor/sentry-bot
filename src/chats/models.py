@@ -40,16 +40,16 @@ class Chat(Base):
 
     # telegram properties
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    chat_type: Mapped[str] = mapped_column(SQLA_Enum(ChatTypeEnum))
+    chat_type: Mapped[str] = mapped_column(SQLA_Enum(ChatTypeEnum, length=10))
     chat_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
-    username: Mapped[Optional[str]] = mapped_column(String)
-    first_name: Mapped[Optional[str]] = mapped_column(String)
-    last_name: Mapped[Optional[str]] = mapped_column(String)
-    chat_title: Mapped[Optional[str]] = mapped_column(String)
+    username: Mapped[Optional[str]] = mapped_column(String(255))
+    first_name: Mapped[Optional[str]] = mapped_column(String(255))
+    last_name: Mapped[Optional[str]] = mapped_column(String(255))
+    chat_title: Mapped[Optional[str]] = mapped_column(String(255))
     chat_inviter: Mapped[Optional[int]] = mapped_column(Integer)
 
     # sentry properties
-    chat_slug: Mapped[str] = mapped_column(String, default=chat_slug_generator)
+    chat_slug: Mapped[str] = mapped_column(String(255), default=chat_slug_generator)
 
     @property
     def name_display(self) -> str:

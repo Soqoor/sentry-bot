@@ -13,7 +13,7 @@ from src.bot.routers import router as bot_router
 from src.chats.admin import ChatAdmin
 from src.config import settings
 from src.database import engine
-from src.sentry.admin import InstallationAdmin
+from src.sentry.admin import AlertAdmin, InstallationAdmin
 from src.sentry.routers import router as sentry_router
 
 if settings.SENTRY_ENABLED:
@@ -54,6 +54,7 @@ async def redirect_to_admin():
 admin = Admin(app=app, engine=engine, authentication_backend=authentication_backend, title="Sentry Bot")
 admin.add_view(ChatAdmin)
 admin.add_view(InstallationAdmin)
+admin.add_view(AlertAdmin)
 
 app.include_router(bot_router)
 app.include_router(sentry_router)
