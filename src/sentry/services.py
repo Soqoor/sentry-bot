@@ -80,7 +80,7 @@ class AlertService:
     async def test_run(self, alert_ids_list: list) -> None:
         from src.bot.bot_application import bot_app
 
-        # alert_ids_list = [int(i) for i in alert_ids_list]
+        alert_ids_list = [int(i) for i in alert_ids_list]
         stmt = select(models.Alert).where(models.Alert.id.in_(alert_ids_list))
         result = await self.db.execute(stmt)
         for alert in result.scalars():

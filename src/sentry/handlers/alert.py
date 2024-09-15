@@ -13,6 +13,7 @@ class AlertSentryHandler(BaseSentryHandler):
     async def handle(self):
         alert = AlertCreate(update=json.dumps(self.update), sentry_hook_resource=self.sentry_hook_resource)
         try:
+            alert.chat_slug = self.get_chat_slug()
             alert.title = self.get_title()[:255]
             alert.description = self.get_description()[:255]
             await self._handle()

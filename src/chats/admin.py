@@ -23,6 +23,8 @@ class ChatAdmin(ModelView, model=Chat):
         Chat.chat_title,
     )
     column_sortable_list = (
+        Chat.is_active,
+        Chat.chat_type,
         Chat.last_activity,
         Chat.user_activity_counter,
         Chat.notify_activity_counter,

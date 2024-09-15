@@ -30,37 +30,19 @@ class InstallationAdmin(ModelView, model=Installation):
 
 
 class AlertAdmin(ModelView, model=Alert):
-    column_list = (
+    default_fields = [
+        Alert.chat_slug,
         Alert.title,
         Alert.description,
         Alert.sentry_hook_resource,
         Alert.error_message,
-        Alert.created,
-    )
+    ]
+    column_list = default_fields + [Alert.created]
+    column_searchable_list = default_fields + [Alert.update]
+    column_sortable_list = default_fields + [Alert.created, Alert.update]
+    form_columns = default_fields + [Alert.update]
     column_default_sort = [(Alert.created, True)]
     column_formatters = {Alert.created: last_activity_format}
-    column_searchable_list = (
-        Alert.title,
-        Alert.description,
-        Alert.sentry_hook_resource,
-        Alert.update,
-        Alert.error_message,
-    )
-    column_sortable_list = (
-        Alert.title,
-        Alert.description,
-        Alert.sentry_hook_resource,
-        Alert.update,
-        Alert.error_message,
-        Alert.created,
-    )
-    form_columns = (
-        Alert.title,
-        Alert.description,
-        Alert.sentry_hook_resource,
-        Alert.update,
-        Alert.error_message,
-    )
     can_edit = False
 
     @action(

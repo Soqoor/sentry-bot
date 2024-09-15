@@ -13,6 +13,7 @@ class InstallationCreateUpdate(BaseModel):
 
 
 class AlertCreate(BaseModel):
+    chat_slug: Optional[str] = ""
     title: Optional[str] = ""
     description: Optional[str] = ""
     sentry_hook_resource: str
