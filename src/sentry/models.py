@@ -29,9 +29,6 @@ class Installation(Base):
 class Alert(Base):
     __tablename__ = "alerts"
 
-    chat_slug: Mapped[Optional[str]] = mapped_column(String(255))
-    title: Mapped[Optional[str]] = mapped_column(String(255))
-    description: Mapped[Optional[str]] = mapped_column(String(255))
     sentry_hook_resource: Mapped[str] = mapped_column(String(32))
     update: Mapped[str] = mapped_column(String)
     error_message: Mapped[Optional[str]] = mapped_column(String(255))

@@ -11,15 +11,14 @@ class AlertSentryHandler(BaseSentryHandler):
     chat_slug_setting_name = "telegram_bot_chat_key"  # Same field name should be set up in action_schema
 
     async def handle(self):
-        alert = AlertCreate(update=json.dumps(self.update), sentry_hook_resource=self.sentry_hook_resource)
         try:
-            alert.chat_slug = self.get_chat_slug()
-            alert.title = self.get_title()[:255]
-            alert.description = self.get_description()[:255]
             await self._handle()
         except Exception as e:
-            alert.error_message = str(e)[:255]
-        finally:
+            alert = AlertCreate(
+                update=json.dumps(self.update),
+                sentry_hook_resource=self.sentry_hook_resource,
+                error_message=str(e)[:255],
+            )
             await AlertService(self.db).create_alert(alert)
 
     async def _handle(self):

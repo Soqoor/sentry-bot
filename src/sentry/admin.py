@@ -31,9 +31,6 @@ class InstallationAdmin(ModelView, model=Installation):
 
 class AlertAdmin(ModelView, model=Alert):
     default_fields = [
-        Alert.chat_slug,
-        Alert.title,
-        Alert.description,
         Alert.sentry_hook_resource,
         Alert.error_message,
     ]
